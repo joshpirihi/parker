@@ -32,6 +32,20 @@ class Topic {
 	
 	/**
 	 *
+	 * @var string
+	 */
+	public $chartColour;
+	
+	/**
+	 *
+	 * @var int
+	 */
+	public $defaultPeriod;
+	
+	
+	
+	/**
+	 *
 	 * @var DataPoint[]
 	 */
 	public $points;
@@ -93,6 +107,9 @@ class Topic {
 		$this->name = $row['name'];
 		$this->points = [];
 		$this->units = $row['units'];
+		$this->chartColour = $row['chartColour'];
+		$this->defaultPeriod = $row['defaultPeriod'];
+		
 		
 	}
 }

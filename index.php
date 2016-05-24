@@ -9,13 +9,13 @@ require_once 'includes/DataPoint.php';
 if (array_key_exists('action', $_GET)) {
 	if ($_GET['action'] == 'datapoints') {
 
-		$topicIDs = json_decode($_POST['topics']);
+		$topicIDs = json_decode($_POST['topics'], true);
 
 		$ret = [];
 
-		foreach ($topicIDs as $tID) {
+		foreach ($topicIDs as $t) {
 
-			$ret[$tID] = DataPoint::allForTopicSince($tID, $_POST['since']);
+			$ret[$t['id']] = DataPoint::allForTopicSince($t['id'], $t['since']);
 
 		}
 
@@ -33,11 +33,30 @@ if (array_key_exists('action', $_GET)) {
 	
 	<head>
 		<title>Parker</title>
-		<script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
-		<script src="js/Chart.js" type="text/javascript"></script>
-		<script src="js/Chart.Scatter.js" type="text/javascript"></script>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+		
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		
+		<link href="css/style.css" rel=stylesheet type=text/css />
+		
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<script src="js/js.cookie.js"></script>
+		
 		<script src="js/moment-with-locales.min.js" type="text/javascript"></script>
 		<script src="js/moment-timezone-with-data.min.js" type="text/javascript"></script>
+		
+		<script src="js/Chart.js" type="text/javascript"></script>
+		<script src="js/Chart.Scatter.js" type="text/javascript"></script>
+		
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		
+		<script src="js/Topic.js" type="text/javascript"></script>
+		
+		
 		
 	</head>
 	
@@ -45,7 +64,7 @@ if (array_key_exists('action', $_GET)) {
 		
 		<script type="text/javascript">
 		
-		var topics = [];
+		var topics = {};
 		
 		var period = 86400;
 		
@@ -57,27 +76,44 @@ if (array_key_exists('action', $_GET)) {
 			
 			$('#placeForCharts').empty();
 			
+			var $ul = $('<ul>');
+			
+			$('#placeForCharts').append($ul);
+			
 			for (var t in topics) {
 				
-				var $canvas = $('<canvas>').attr('id', 'canvas_'+topics[t].id).css({width: '400px', height: '300px'});
+				var $canvas = $('<canvas>').addClass('').attr('id', 'canvas_'+topics[t].id);
 				
-				$('#placeForCharts').append(
-					$('<fieldset>').css({width: '600px', height: '300px'}).append(
-						$('<legend>').css('text-align', 'center').text(topics[t].description),
-						$('<table>').css('width', '100%').append(
-							$('<tr>').append(
-								$('<td>').css('width', '400px').append($canvas),
-								$('<td>').css({
-									'text-align': 'center',
-									'vertical-align': 'top'
-								}).append(
-									$('<div>').css({
-										'font-weight': 'bold'
-									}).text('Current'),
-									$('<div>').css('font-size', '150%').attr('id', 'current_'+t),
-									$('<div>').css('color', '#858585').attr('id', 'lastUpdated_'+t)
+				$ul.append(
+					$('<li>').append(
+						$('<fieldset>').addClass('chartContainer').append(
+						//$('<fieldset>').append(
+							$('<legend>').css('text-align', 'center').text(topics[t].description),
+							$('<table>').addClass('summary').append(
+								$('<tr>').append(
+									$('<td>').addClass('firstColumn'),
+									$('<td>').addClass('secondColumn').attr('colspan', '2'),//.addClass('valueCell valueTitle').attr('id', 'minmax_'+t).text('Past '+topics[t].periodName()),
+									$('<td>')
+								),
+								$('<tr>').append(
+									$('<td>').addClass('valueCell').append(
+										$('<div>').addClass('valueTitle').text('Current'),
+										$('<div>').css('font-size', '150%').attr('id', 'current_'+t)
+									),
+									$('<td>').addClass('valueCell').append(
+										$('<div>').addClass('valueTitle').text('Min'),
+										$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'min24_'+t)
+									),
+									$('<td>').addClass('valueCell').append(
+										$('<div>').addClass('valueTitle').text('Max'),
+										$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'max24_'+t)
+									),
+									$('<td>')
 								)
-							)
+							),
+							$('<div>').addClass('chart').append($canvas),
+							$('<div>').addClass('lastUpdated').attr('id', 'lastUpdated_'+t)
+						//)
 						)
 					)
 				);
@@ -87,27 +123,32 @@ if (array_key_exists('action', $_GET)) {
 				topics[t].createChart(ctx);
 			}
 			
+			
 		}
 		
 		function updateData() {
 			
 			var topicIDs = [];
 			for (var t in topics) {
-				topicIDs.push(topics[t].id);
+				topicIDs.push({
+					id: topics[t].id,
+					since: topics[t].mostRecent
+				});
 			}
 			
 			$.post('index.php?action=datapoints', {
-				'topics': JSON.stringify(topicIDs),
-				'since': mostRecent
+				'topics': JSON.stringify(topicIDs)
 			}, function(data) {
 				
 				mostRecent = moment().unix();
-				var oldest = (moment().unix() - period)*1000;
+				var oldest = moment().subtract(period, 'seconds');
 				
 				for (var tID in data) {
 					
-					topics[tID].removePointsOlderThan(oldest);
 					topics[tID].addPoints(data[tID]);
+					topics[tID].removeOldPoints();
+					
+					topics[tID].mostRecent = topics[tID].latestPoint.time.unix();
 					
 					//append the new datapoints onto the topic's array
 					/*for (var dp in data[tID]) {
@@ -123,9 +164,17 @@ if (array_key_exists('action', $_GET)) {
 					$('#current_'+tID).empty().text(topics[tID].latestPoint.value+topics[tID].units);
 					$('#lastUpdated_'+tID).empty().text('Updated '+topics[tID].latestPoint.time.fromNow());
 					
+					var minMax = topics[tID].minMax();
+					$('#min24_'+tID).empty().append(
+						minMax.minValue+topics[tID].units
+					);
+					$('#max24_'+tID).empty().append(
+						minMax.maxValue+topics[tID].units
+					);
+					
 				}
 				
-				prunePointArrays();
+				//prunePointArrays();
 				//fillCharts();
 				
 				setTimeout(updateData, 10000);
@@ -143,10 +192,18 @@ if (array_key_exists('action', $_GET)) {
 		
 		
 		function loadTopics() {
+			
 			$.get('index.php?action=topics', function(data) {
 				
 				for (var d in data) {
 					topics[d] = new Topic(data[d]);
+					
+					var cookiePeriod = Cookies.get('period');
+					
+					if (typeof cookiePeriod !== 'undefined') {
+						topics[d].period = parseInt(cookiePeriod);
+					}
+					$('#period').val(topics[d].period).selectmenu('refresh');
 				}
 				
 				$('#placeForCharts').empty();
@@ -155,18 +212,59 @@ if (array_key_exists('action', $_GET)) {
 				updateData();
 				
 			}, 'json').fail(function() {
+				
 				setTimeout(loadTopics, 30000);
 			});
 		}
 		
+		function changedPeriod() {
+			
+			Cookies.set('period', $('#period').val(), { expires: moment().add(1, 'year').toDate() });
+			
+			for (var t in topics) {
+				topics[t].period = $('#period').val();
+				//$('#minmax_'+t).text('Past '+topics[t].periodName())
+				topics[t].redrawChart();
+			}
+			
+		}
+		
 		$(function(){
+			
 			loadTopics();
 		});
 		
 		</script>
 		
-		<div id="placeForCharts"></div>
+		<div data-role="page">
 		
+			<div data-role="header" role="banner">
+				<h1 class="ui-title optional" role="heading">Weather Station</h1>
+				
+				<div class="ui-btn-right">
+				<select id="period" onchange="changedPeriod();">
+					<option value="86400">View: 24hrs</option>
+					<option value="172800">View: 48hrs</option>
+					<option value="604800">View: 1 week</option>
+				</select>
+				</div>
+				
+			</div>
+			
+		<div class="container">
+			<div class="row" id="placeForCharts"></div>
+			
+			<!--<div class="compass">
+				<div class="direction">
+					<p>NE<span>10 kmh</span></p>
+				</div>
+				<div class="arrow now ne"></div>
+				<div class="arrow was n"></div>
+			</div>-->
+			
+		</div>
+			
+		</div>
 	</body>
 	
 </html>

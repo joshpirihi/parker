@@ -1,5 +1,7 @@
 <?php
-$db = new SQLite3('/home/pi/parker/database.sqlite', SQLITE3_OPEN_READONLY);
+require_once 'config.inc.php';
+
+$db = new SQLite3(DATABASEPATH, SQLITE3_OPEN_READONLY);
 $db->busyTimeout(1000);
 
 register_shutdown_function(function () {
