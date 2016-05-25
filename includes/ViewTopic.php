@@ -38,4 +38,31 @@ class ViewTopic {
 	 */
 	public $chart;
 	
+	/**
+	 * 
+	 * @param int $vID
+	 * @return ViewTopic[]
+	 */
+	public static function allForView($vID) {
+		
+		$rows = dbh_query('SELECT * FROM `viewTopics` WHERE `viewID` = ? ORDER BY `topicID` ASC;', [$vID]);
+		
+		$vts = [];
+		foreach ($rows as $row) {
+			$instance = new self();
+			$instance->loadFromDBRow($row);
+			$vts[] = $instance;
+		}
+		
+		return $vts;
+	}
+	
+	public function loadFromDBRow($row) {
+		
+		$this->chart = $row['chart'];
+		$this->id = $row['id'];
+		$this->topicID = $row['topicID'];
+		$this->viewID = $row['viewID'];
+		
+	}
 }

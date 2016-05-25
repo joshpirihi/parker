@@ -4,7 +4,7 @@
  * Description of View
  *
  * @author joshpirihi
- * @sql CREATE TABLE [view] (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, meteogramID INTEGER);
+ * @sql CREATE TABLE views (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, meteogramID INTEGER);
  */
 class View {
 	
@@ -22,9 +22,9 @@ class View {
 	
 	/**
 	 *
-	 * @var int|null
+	 * @var Meteogram|null
 	 */
-	public $meteogramID;
+	public $meteogram;
 	
 	/**
 	 *
@@ -32,6 +32,30 @@ class View {
 	 */
 	public $viewTopics;
 	
+	/**
+	 * @return View[]
+	 */
+	public static function all() {
+		
+		$rows = dbh_query('SELECT * FROM `views` ORDER BY `name` ASC;', []);
+		
+		$views = [];
+		
+		foreach ($rows as $row) {
+			$instance = new self();
+			$instance->loadFromDBRow($row);
+			$instance->viewTopics = ViewTopic::allForView($instance->id);
+			$views[] = $instance;
+		}
+		
+		return $views;
+	}
 	
+	function loadFromDBRow($row) {
+		
+		$this->id = $row['id'];
+		$this->name = $row['name'];
+		$this->meteogram = Meteogram::withID($row['meteogramID']);
+	}
 	
 }
