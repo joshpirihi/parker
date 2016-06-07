@@ -39,6 +39,18 @@ class ViewTopic {
 	public $chart;
 	
 	/**
+	 *
+	 * @var bool
+	 */
+	public $gauge;
+	
+	/**
+	 *
+	 * @var bool
+	 */
+	public $big;
+	
+	/**
 	 * 
 	 * @param int $vID
 	 * @return ViewTopic[]
@@ -60,9 +72,11 @@ class ViewTopic {
 	public function loadFromDBRow($row) {
 		
 		$this->chart = $row['chart'];
+		$this->gauge = $row['gauge'];
 		$this->id = $row['id'];
 		$this->topicID = $row['topicID'];
 		$this->viewID = $row['viewID'];
+		$this->big = $row['big'];
 		
 	}
 }

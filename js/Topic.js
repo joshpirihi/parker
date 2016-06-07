@@ -8,12 +8,13 @@ function Topic(data) {
 	
 	this.chartType = 'scatter';
 	this.colour = data.chartColour;
-	this.period = data.defaultPeriod;
+	this.chartMin = data.chartMin;
+	this.chartMax = data.chartMax;
+	this.decimalPoints = data.decimalPoints;
 	
 	this.mostRecent = moment().unix() - this.period;
 	
 	this.points = {};
-	this.chart = null;
 	this.latestPoint = null;
 }
 
@@ -35,27 +36,17 @@ Topic.prototype = {
 	 */
 	addPoints: function(pts) {
 		
-		var u = moment().unix() - this.period;
-		
 		for (var p in pts) {
+			
 			var point = new Point(pts[p]);
 			
-			if (point.time.unix() >= u) {
-				var xy = point.asXY();
-				this.chart.datasets[0].addPoint(xy.x, xy.y);
-			}
-			
 			this.points[point.time.unix()] = point;
+			
 			if (this.latestPoint == null || point.time.isAfter(this.latestPoint.time)) {
 				this.latestPoint = point;
+				this.mostRecent = point.time.unix();
 			}
 		}
-		
-		if (this.chart.datasets[0].points[0].arg == 0) {
-			this.chart.datasets[0].removePoint(0);
-		}
-		
-		this.chart.update();
 	},
 	/**
 	 * 
@@ -64,84 +55,38 @@ Topic.prototype = {
 	removeOldPoints: function() {
 		var u = moment().unix() - 7*86400;
 		
-		//console.log('Deleting points older than '+moment.unix(u).format());
-		
-		//if (this.latestPoint != null) {
-		//	u = this.latestPoint.time.unix() - this.period;
-		//}
-		
 		for (var p in this.points) {
-			//console.log('Checking '+p+' against '+u);
 			if (p < u) {
-				//console.log('Deleting point from '+this.points[p].time.format());
 				delete this.points[p];
 			}
 		}
-		
-		u = u * 1000;
-		
-		for (var p in this.chart.datasets[0].points) {
-			if (this.chart.datasets[0].points[p].arg < u) {
-				this.chart.datasets[0].removePoint(p);
-			}
-		}
-		
-		this.chart.update();
-	},
-	/**
-	 * 
-	 * @param canvasContext context
-	 */
-	createChart: function (context) {
-		
-		if (this.chartType == 'scatter') {
-			this.chart = new Chart(context).Scatter([
-				{
-					label: this.description,
-					strokeColor: this.colour,
-					pointColor: this.colour,
-					pointStrokeColor: '#fff',
-					data: this.dataForScatterChart()
-				}
-			], {
-				bezierCurve: false,
-				datasetStroke: true,
-				pointDot: false,
-				showTooltips: true,
-				scaleShowHorizontalLines: true,
-				scaleShowLabels: true,
-				scaleType: "date",
-				scaleLabel: "<%=value%>" + this.units,
-				useUtc: false,
-				scaleDateFormat: "mmm d",
-				scaleTimeFormat: "HH:MM",
-				scaleDateTimeFormat: "mmm d, yyyy, HH:MM",
-				animation: false,
-				responsive: true,
-				maintainAspectRatio: false
-			});
-		}
 	},
 	
+	
 	/**
-	 * returns an array of {x: <>,y: <>} objects to use in a scatter chart
+	 * returns an array of [<Date>, <value>] objects to use in a scatter chart
 	 * 
+	 * @param unixTime since
 	 * @returns array
 	 */
-	dataForScatterChart: function() {
+	dataForScatterChart: function(since) {
 		if (Object.keys(this.points).length == 0) {
 			/*this.points[0] = new Point({
 				id: 0,
 				time: new Date(0),
 				value: 0
 			});//*/
-			return [{x: new Date(0), y: 0}];
+			//return [{x: new Date(0), y: 0}];
+			return [];
 		}
+		
+		since = (typeof since === 'undefined') ? 0 : since;
+		
 		var data = [];
-		var u = moment().unix() - this.period;
+		var u = moment().unix() - period;
 		for (var p in this.points) {
 			
-			if (p < u) {
+			if (p < u || p < since) {
 				continue;
 			}
 			
@@ -152,7 +97,7 @@ Topic.prototype = {
 	
 	minMax: function(since, until) {
 		
-		since = typeof since !== 'undefined' ? since : 0;
+		since = typeof since !== 'undefined' ? since : moment().unix() - period;
 		until = typeof until !== 'undefined' ? until : moment().unix();
 		
 		var ret = {
@@ -183,45 +128,7 @@ Topic.prototype = {
 		return ret;
 	},
 	
-	/**
-	 * Clears and reassigns the chart dataset
-	 */
-	redrawChart: function() {
-		
-		//for (var i in this.chart.datasets[0].points) {
-		//	this.chart.datasets[0].removePoint(i);
-		//}
-		
-		this.chart.datasets[0].points = [];
-		
-		
-		if (this.chartType == 'scatter') {
-			
-			var u = moment().unix() - this.period;
-			
-			/*var dataset = {
-				label: this.description,
-				strokeColor: this.colour,
-				pointColor: this.colour,
-				pointStrokeColor: '#fff',
-				data: this.dataForScatterChart()
-			};
-			
-			this.chart.datasets.push(dataset);
-			this.chart.datasets.shift();*/
-			
-			for (var p in this.points) {
-				if (p < u) {
-					continue;
-				}
-				
-				this.chart.datasets[0].addPoint(this.points[p].time.toDate(), this.points[p].value)
-			}
-			
-		}
-		
-		this.chart.update();
-	}
+	
 }
 
 function Point(data) {

@@ -4,6 +4,12 @@
     padding: 0;
 }
 
+.gauge {
+    height: 200px;
+    width: 300px;
+    float: left;
+}
+
 .lastUpdated {
     color: #858585;
     font-size: 80%;

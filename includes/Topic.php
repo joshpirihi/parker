@@ -13,12 +13,16 @@ class Topic {
 	public $id;
 	
 	/**
+	 * MQTT Topic name
+	 * eg /topic/name
 	 *
 	 * @var string
 	 */
 	public $name;
 	
 	/**
+	 * Human readable title
+	 * eg Outside Temperature
 	 *
 	 * @var string
 	 */
@@ -31,6 +35,8 @@ class Topic {
 	public $units;
 	
 	/**
+	 * used directly as CSS value
+	 * eg #ff5500 or rgba(255, 100, 0, 1)
 	 *
 	 * @var string
 	 */
@@ -42,7 +48,23 @@ class Topic {
 	 */
 	public $defaultPeriod;
 	
+	/**
+	 *
+	 * @var double
+	 */
+	public $chartMin;
 	
+	/**
+	 *
+	 * @var double
+	 */
+	public $chartMax;
+	
+	/**
+	 *
+	 * @var int
+	 */
+	public $decimalPoints;
 	
 	/**
 	 *
@@ -109,7 +131,9 @@ class Topic {
 		$this->units = $row['units'];
 		$this->chartColour = $row['chartColour'];
 		$this->defaultPeriod = $row['defaultPeriod'];
-		
+		$this->chartMin = $row['chartMin'];
+		$this->chartMax = $row['chartMax'];
+		$this->decimalPoints = $row['decimalPlaces'];
 		
 	}
 }

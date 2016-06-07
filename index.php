@@ -24,6 +24,10 @@ if (array_key_exists('action', $_GET)) {
 		
 		exit(json_encode(Topic::all(), JSON_PRETTY_PRINT));
 		
+	} else if ($_GET['action'] == 'views') {
+		
+		exit(json_encode(View::all(), JSON_PRETTY_PRINT));
+		
 	}
 }
 
@@ -52,10 +56,13 @@ if (array_key_exists('action', $_GET)) {
 		<script src="js/Chart.Scatter.js" type="text/javascript"></script>
 		
 		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<!--<script src="https://code.highcharts.com/modules/exporting.js"></script>-->
+		<script src="https://code.highcharts.com/highcharts-more.js"></script>
+		<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 		
 		<script src="js/Topic.js" type="text/javascript"></script>
-		
+		<script src="js/GaugeController.js" type="text/javascript"></script>
+		<script src="js/ScatterChartController.js" type="text/javascript"></script>
 		
 		
 	</head>
@@ -65,6 +72,13 @@ if (array_key_exists('action', $_GET)) {
 		<script type="text/javascript">
 		
 		var topics = {};
+		var topicIDs = [];
+		
+		var views = [];
+		var view = null;
+		
+		var chartControllers = [];
+		var gaugeControllers = [];
 		
 		var period = 86400;
 		
@@ -72,72 +86,33 @@ if (array_key_exists('action', $_GET)) {
 		
 		var timezone = 'Pacific/Auckland';
 		
-		function drawCharts() {
-			
-			$('#placeForCharts').empty();
-			
-			var $ul = $('<ul>');
-			
-			$('#placeForCharts').append($ul);
-			
-			for (var t in topics) {
-				
-				var $canvas = $('<canvas>').addClass('').attr('id', 'canvas_'+topics[t].id);
-				
-				$ul.append(
-					$('<li>').append(
-						$('<fieldset>').addClass('chartContainer').append(
-						//$('<fieldset>').append(
-							$('<legend>').css('text-align', 'center').text(topics[t].description),
-							$('<table>').addClass('summary').append(
-								$('<tr>').append(
-									$('<td>').addClass('firstColumn'),
-									$('<td>').addClass('secondColumn').attr('colspan', '2'),//.addClass('valueCell valueTitle').attr('id', 'minmax_'+t).text('Past '+topics[t].periodName()),
-									$('<td>')
-								),
-								$('<tr>').append(
-									$('<td>').addClass('valueCell').append(
-										$('<div>').addClass('valueTitle').text('Current'),
-										$('<div>').css('font-size', '150%').attr('id', 'current_'+t)
-									),
-									$('<td>').addClass('valueCell').append(
-										$('<div>').addClass('valueTitle').text('Min'),
-										$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'min24_'+t)
-									),
-									$('<td>').addClass('valueCell').append(
-										$('<div>').addClass('valueTitle').text('Max'),
-										$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'max24_'+t)
-									),
-									$('<td>')
-								)
-							),
-							$('<div>').addClass('chart').append($canvas),
-							$('<div>').addClass('lastUpdated').attr('id', 'lastUpdated_'+t)
-						//)
-						)
-					)
-				);
-				
-				var ctx = document.getElementById("canvas_"+t).getContext("2d");
-				
-				topics[t].createChart(ctx);
-			}
-			
-			
-		}
-		
 		function updateData() {
 			
-			var topicIDs = [];
-			for (var t in topics) {
-				topicIDs.push({
-					id: topics[t].id,
-					since: topics[t].mostRecent
-				});
+			if (topicIDs.length == 0) {
+				setTimeout(updateData, 500);
+				return;
+			}
+			
+			//go through the topicIDs array, and figure out the most recent datapoint we have for each
+			var topicsToGet = [];
+			var earliest = moment().subtract(7, 'days').unix();
+			
+			for (var t in topicIDs) {
+				
+				var toGet = {
+					id: topicIDs[t],
+					since: earliest 
+				};
+				
+				if (topics.hasOwnProperty(topicIDs[t]) && topics[topicIDs[t]].mostRecent > toGet.since) {
+					toGet.since = topics[topicIDs[t]].mostRecent;
+				}
+				
+				topicsToGet.push(toGet);
 			}
 			
 			$.post('index.php?action=datapoints', {
-				'topics': JSON.stringify(topicIDs)
+				'topics': JSON.stringify(topicsToGet)
 			}, function(data) {
 				
 				mostRecent = moment().unix();
@@ -159,31 +134,32 @@ if (array_key_exists('action', $_GET)) {
 						topics[tID].latestTime = moment(data[tID][dp].time);
 						
 					}
-					topics[tID].chart.update();//*/
+					topics[tID].chart.update();
 					
-					$('#current_'+tID).empty().text(topics[tID].latestPoint.value+topics[tID].units);
-					$('#lastUpdated_'+tID).empty().text('Updated '+topics[tID].latestPoint.time.fromNow());
-					
-					var minMax = topics[tID].minMax();
-					$('#min24_'+tID).empty().append(
-						minMax.minValue+topics[tID].units
-					);
-					$('#max24_'+tID).empty().append(
-						minMax.maxValue+topics[tID].units
-					);
+					//*/
 					
 				}
 				
-				//prunePointArrays();
-				//fillCharts();
+				for (var g in gaugeControllers) {
+					gaugeControllers[g].update();
+				}
+				
+				for (var g in chartControllers) {
+					chartControllers[g].update();
+				}
 				
 				setTimeout(updateData, 10000);
 				
 			}, 'json').fail(function() {
 				setTimeout(updateData, 30000);
 				
-				for (var tID in topics) {
-					$('#lastUpdated_'+tID).empty().text('Updated '+topics[tID].latestPoint.time.fromNow());
+				//make sure we still update the Last Updated field
+				for (var g in gaugeControllers) {
+					gaugeControllers[g].update();
+				}
+				
+				for (var g in chartControllers) {
+					chartControllers[g].update();
 				}
 				
 			});
@@ -197,19 +173,12 @@ if (array_key_exists('action', $_GET)) {
 				
 				for (var d in data) {
 					topics[d] = new Topic(data[d]);
-					
-					var cookiePeriod = Cookies.get('period');
-					
-					if (typeof cookiePeriod !== 'undefined') {
-						topics[d].period = parseInt(cookiePeriod);
-					}
-					$('#period').val(topics[d].period).selectmenu('refresh');
 				}
 				
 				$('#placeForCharts').empty();
 				
-				drawCharts();
-				updateData();
+				//drawCharts();
+				//updateData();
 				
 			}, 'json').fail(function() {
 				
@@ -221,17 +190,94 @@ if (array_key_exists('action', $_GET)) {
 			
 			Cookies.set('period', $('#period').val(), { expires: moment().add(1, 'year').toDate() });
 			
-			for (var t in topics) {
-				topics[t].period = $('#period').val();
-				//$('#minmax_'+t).text('Past '+topics[t].periodName())
-				topics[t].redrawChart();
+			period = parseInt($('#period').val());
+			
+			for (var c in chartControllers) {
+				chartControllers[c].redrawChart();
 			}
 			
 		}
 		
+		function loadViews() {
+			
+			$.get('index.php?action=views', function(data) {
+				
+				views = data;
+				if (view == null) {
+					view = views[0];
+				} else {
+					for (var v in views) {
+						if (views[v].id == view.id) {
+							view = views[v];
+							break;
+						}
+					}
+				}
+				displayView();
+				
+			}, 'json').fail(function() {
+				
+				setTimeout(loadTopics, 30000);
+			});
+		}
+		
+		function displayView() {
+			
+			gaugeControllers = [];
+			$('#placeForGauges').empty();
+			
+			chartControllers = [];
+			$('#placeForCharts').empty();
+			
+			//reset the topicIDs array
+			
+			topicIDs = [];
+			for (var t in view.viewTopics) {
+				topicIDs.push(view.viewTopics[t].topicID);
+				
+				if (view.viewTopics[t].gauge) {
+					//make some new gauges
+					var containerID = 'gauge_'+view.viewTopics[t].topicID;
+					$('#placeForGauges').append(
+						$('<div>').attr('id', containerID).addClass('gauge')
+					);
+
+					var gc = new GaugeController(view.viewTopics[t], containerID);
+					gc.draw();
+					
+					gaugeControllers.push(gc);
+				}
+				
+				//add a chart if thats what they want
+				if (view.viewTopics[t].chart) {
+
+					var cc = new ScatterChartController(view.viewTopics[t]);
+					cc.draw();
+					
+					chartControllers.push(cc);
+				}
+				
+			}
+			
+		}
+		
+		function round(value, decimals) {
+			return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+		}
+		
 		$(function(){
 			
+			var cookiePeriod = Cookies.get('period');
+					
+			if (typeof cookiePeriod !== 'undefined') {
+				period = parseInt(cookiePeriod);
+			}
+			
+			$('#period').val(period).selectmenu('refresh');
+			 
 			loadTopics();
+			loadViews();
+			updateData();
 		});
 		
 		</script>
@@ -252,7 +298,8 @@ if (array_key_exists('action', $_GET)) {
 			</div>
 			
 		<div class="container">
-			<div class="row" id="placeForCharts"></div>
+			<div class="row"><ul id="placeForCharts"></ul></div>
+			<div class="row" id="placeForGauges"></div>
 			
 			<!--<div class="compass">
 				<div class="direction">

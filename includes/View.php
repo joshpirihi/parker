@@ -22,12 +22,6 @@ class View {
 	
 	/**
 	 *
-	 * @var Meteogram|null
-	 */
-	public $meteogram;
-	
-	/**
-	 *
 	 * @var ViewTopic[]
 	 */
 	public $viewTopics;
@@ -55,7 +49,6 @@ class View {
 		
 		$this->id = $row['id'];
 		$this->name = $row['name'];
-		$this->meteogram = Meteogram::withID($row['meteogramID']);
 	}
 	
 }
