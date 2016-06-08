@@ -67,15 +67,16 @@ ScatterChartController.prototype = {
 			scaleShowHorizontalLines: true,
 			scaleShowLabels: true,
 			scaleType: "date",
-			//scaleLabel: "<%=round(value, " + topic.decimalPoints + "%>" + topic.units,
-			scaleLabel: "<%=value%>" + topic.units,
+			scaleLabel: "<%=Math.round(value, " + topic.decimalPoints + "%>" + topic.units,
+			//scaleLabel: "<%=value%>" + topic.units,
 			useUtc: false,
 			scaleDateFormat: "mmm d",
 			scaleTimeFormat: "HH:MM",
 			scaleDateTimeFormat: "mmm d, yyyy, HH:MM",
 			animation: false,
 			responsive: true,
-			maintainAspectRatio: false
+			maintainAspectRatio: false,
+			pointHitDetectionRadius: 1
 		});
 	},
 	
