@@ -133,7 +133,7 @@ class Topic {
 		$this->defaultPeriod = $row['defaultPeriod'];
 		$this->chartMin = $row['chartMin'];
 		$this->chartMax = $row['chartMax'];
-		$this->decimalPoints = $row['decimalPlaces'];
+		$this->decimalPoints = $row['decimalPoints'];
 		
 	}
 }
