@@ -67,7 +67,7 @@ ScatterChartController.prototype = {
 			scaleShowHorizontalLines: true,
 			scaleShowLabels: true,
 			scaleType: "date",
-			scaleLabel: "<%=Math.round(value, " + topic.decimalPoints + "%>" + topic.units,
+			scaleLabel: "<%=Math.round(value, " + topic.decimalPoints + ")%>" + topic.units,
 			//scaleLabel: "<%=value%>" + topic.units,
 			useUtc: false,
 			scaleDateFormat: "mmm d",
