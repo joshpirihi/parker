@@ -18,9 +18,18 @@ ScatterChartController.prototype = {
 		var $canvas = $('<canvas>').addClass('').attr('id', 'canvas_' + topic.id);
 
 		$('#placeForCharts').append(
-			$('<li>').append(
-				$('<fieldset>').addClass('chartContainer').append(
-					$('<legend>').css('text-align', 'center').text(topic.description),
+			//$('<li>').append(
+			$('<div>').addClass('col-md-6').css({
+				padding: '10px'
+			}).append(
+				$('<div>').addClass('').css({
+					backgroundColor: topic.colour,
+					borderRadius: '3px',
+					border: 'none',
+					padding: '0',
+					zIndex: '100'
+				}).append(
+					/*$('<span>').css('text-align', 'center').text(topic.description),
 					$('<table>').addClass('summary').append(
 						$('<tr>').append(
 							$('<td>').addClass('firstColumn'),
@@ -42,9 +51,24 @@ ScatterChartController.prototype = {
 							),
 							$('<td>')
 						)
+					),//*/
+					$('<div>').addClass('summary').css({
+						padding: '20px 20px 0px 20px'
+					}).append(
+						$('<span>').css({
+							color: 'rgba(255,255,255,0.65)',
+							textTransform: 'uppercase'
+						}).text(topic.description),
+						$('<br>'),
+						$('<h2>').attr('id', 'current_' + topic.id).css({
+							display: 'inline'
+						}).text(''),
+						$('<small>').append(
+							$('<span>').attr('id', 'min24_'+topic.id)
+						)
 					),
-					$('<div>').addClass('chart').append($canvas),
-					$('<div>').addClass('lastUpdated').attr('id', 'lastUpdated_' + topic.id)
+					$('<div>').addClass('chart').append($canvas)
+					//$('<div>').addClass('lastUpdated').attr('id', 'lastUpdated_' + topic.id)
 				)
 			)
 		);
@@ -57,7 +81,8 @@ ScatterChartController.prototype = {
 				strokeColor: topic.colour,
 				pointColor: topic.colour,
 				pointStrokeColor: '#fff',
-				data: [{x: 0, y: 0}]
+				data: [{x: 0, y: 0}],
+				fill: true
 			}
 		], {
 			bezierCurve: false,
@@ -65,7 +90,7 @@ ScatterChartController.prototype = {
 			pointDot: false,
 			showTooltips: true,
 			scaleShowHorizontalLines: true,
-			scaleShowLabels: true,
+			scaleShowLabels: false,
 			scaleType: "date",
 			scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
 			//scaleLabel: "<%=value%>" + topic.units,
@@ -76,7 +101,8 @@ ScatterChartController.prototype = {
 			animation: false,
 			responsive: true,
 			maintainAspectRatio: false,
-			pointHitDetectionRadius: 1
+			pointHitDetectionRadius: 1,
+			fill: true
 		});
 	},
 	
@@ -96,7 +122,7 @@ ScatterChartController.prototype = {
 		this.chart.update();
 		
 		$('#current_' + this.topicID).empty().text(topics[this.topicID].latestPoint.value + topics[this.topicID].units);
-		$('#lastUpdated_' + this.topicID).empty().text('Updated ' + topics[this.topicID].latestPoint.time.fromNow());
+		//$('#lastUpdated_' + this.topicID).empty().text('Updated ' + topics[this.topicID].latestPoint.time.fromNow());
 
 		var minMax = topics[this.topicID].minMax();
 		$('#min24_' + this.topicID).empty().append(

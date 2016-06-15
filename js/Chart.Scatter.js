@@ -155,7 +155,7 @@
 	var defaultConfig = {
 
 		// INHERIT
-		// showScale: true,							// Boolean - If we should show the scale at all
+		showScale: false,							// Boolean - If we should show the scale at all
 		// scaleLineColor: "rgba(0,0,0,.1)",		// String - Colour of the scale line
 		// scaleLineWidth: 1,						// Number - Pixel width of the scale line
 		// scaleShowLabels: true,					// Boolean - Whether to show labels on the scale
@@ -167,7 +167,7 @@
 		// SCALE
 		scaleShowGridLines: true,				//Boolean - Whether grid lines are shown across the chart
 		scaleGridLineWidth: 1,					//Number - Width of the grid lines
-		scaleGridLineColor: "rgba(0,0,0,.05)",	//String - Colour of the grid lines
+		scaleGridLineColor: "rgba(0,0,0,.00)",	//String - Colour of the grid lines
 		scaleShowHorizontalLines: true,			//Boolean - Whether to show horizontal lines (except X axis)
 		scaleShowVerticalLines: true,			//Boolean - Whether to show vertical lines (except Y axis)
 
@@ -187,6 +187,7 @@
 		bezierCurve: true,				// Boolean - Whether the line is curved between points
 		bezierCurveTension: 0.4,		// Number - Tension of the bezier curve between points
 
+		fill: false,
 
 
 		// POINTS
@@ -211,7 +212,7 @@
 			// ???????????? ??????????????? ?????????
 
 			this.font = helpers.fontString(this.fontSize, this.fontStyle, this.fontFamily);
-			this.padding = this.fontSize / 2;
+			this.padding = 0;//this.fontSize / 2;
 		},
 
 		setDataRange: function (dataRange) {
@@ -289,6 +290,8 @@
 				this.fontSize,
 				false,	// beginAtZero,
 				true); // integersOnly
+			this.xScaleRange.min = this.dataRange.xmin;
+			this.xScaleRange.max = this.dataRange.xmax;
 		},
 
 		generateYLabels: function () {
@@ -558,6 +561,8 @@
 				this.chart.width,
 				this.fontSize
 			);
+			this.xScaleRange.min = this.dataRange.xmin;
+			this.xScaleRange.max = this.dataRange.xmax;
 		},
 
 		argToString: function (arg) {
@@ -926,7 +931,8 @@
 
 			ctx.lineJoin = "round";
 			ctx.lineWidth = this.options.datasetStrokeWidth;
-			ctx.strokeStyle = dataset.strokeColor || this.options.datasetStrokeColor;
+			//ctx.strokeStyle = dataset.strokeColor || this.options.datasetStrokeColor;
+			ctx.strokeStyle = "rgba(255, 255, 255, 1)";
 
 			ctx.beginPath();
 
@@ -956,9 +962,26 @@
 				prev = point;
 
 			}, this);
-
+			
+			
 			ctx.stroke();
-
+			
+			if (this.options.fill) {
+				
+				//need to move the line vertically down to the bottom of the chart area, 
+				//then back to the x of the first point, 
+				//then close
+				
+				ctx.lineTo(dataset.points[dataset.points.length-1].x, this.chart.height-this.scale.yPadding);
+				ctx.lineTo(dataset.points[0].x, this.chart.height-this.scale.yPadding);
+				ctx.closePath();
+				//ctx.fillStyle = this._shadeColor((dataset.strokeColor || this.options.datasetStrokeColor), 0.8);
+				ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+				ctx.fill();
+				
+				
+			}
+			
 			// debug
 			//if (this.options.bezierCurve) {
 
@@ -973,6 +996,11 @@
 			//		ctx.stroke();
 			//	});
 			//}
+		},
+		
+		_shadeColor: function (color, percent) {   
+			var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+			return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 		},
 
 		update: function () {

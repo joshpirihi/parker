@@ -40,12 +40,23 @@ if (array_key_exists('action', $_GET)) {
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 		
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />-->
 		
-		<link href="css/style.css" rel=stylesheet type=text/css />
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 		
 		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+		
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="js/bootstrap.min.js"></script>
+		
+		<link href="css/style.css" rel=stylesheet type=text/css />
 		
 		<script src="js/js.cookie.js"></script>
 		
@@ -67,7 +78,7 @@ if (array_key_exists('action', $_GET)) {
 		
 	</head>
 	
-	<body style="font-family: sans-serif;">
+	<body style="">
 		
 		<script type="text/javascript">
 		
@@ -273,7 +284,7 @@ if (array_key_exists('action', $_GET)) {
 				period = parseInt(cookiePeriod);
 			}
 			
-			$('#period').val(period).selectmenu('refresh');
+			$('#period').val(period);//.selectmenu('refresh');
 			 
 			loadTopics();
 			loadViews();
@@ -282,23 +293,52 @@ if (array_key_exists('action', $_GET)) {
 		
 		</script>
 		
-		<div data-role="page">
-		
-			<div data-role="header" role="banner">
-				<h1 class="ui-title optional" role="heading">Weather Station</h1>
+		<nav class="navbar navbar-default">
+			<div class="container">
 				
-				<div class="ui-btn-right">
+				<div class="navbar-header">
+					
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					
+					<a class="navbar-brand" target="#">Weather Station</a>
+					
+					<ul
+					
+				</div>
+				
+				
+			</div>
+			
+			<div id="navbar" class="navbar-collapse collapse">
+				
+				<ul class="nav navbar-nav">
+					
+				</ul>
+				
+				<ul class="nav navbar-nav navbar-right">
+					<li class="">
+						
+					</li>
+				</ul>
+				
+			</div>
+			
+		</nav>
+		
+		<div class="container">
+			<div class="">
 				<select id="period" onchange="changedPeriod();">
 					<option value="86400">View: 24hrs</option>
 					<option value="172800">View: 48hrs</option>
 					<option value="604800">View: 1 week</option>
 				</select>
 				</div>
-				
-			</div>
-			
-		<div class="container">
-			<div class="row"><ul id="placeForCharts"></ul></div>
+			<div class="row" id="placeForCharts"></div>
 			<div class="row" id="placeForGauges"></div>
 			
 			<!--<div class="compass">
@@ -311,7 +351,6 @@ if (array_key_exists('action', $_GET)) {
 			
 		</div>
 			
-		</div>
 	</body>
 	
 </html>
