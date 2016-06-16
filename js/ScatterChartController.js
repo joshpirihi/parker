@@ -53,18 +53,38 @@ ScatterChartController.prototype = {
 						)
 					),//*/
 					$('<div>').addClass('summary').css({
-						padding: '20px 20px 0px 20px'
+						
 					}).append(
 						$('<span>').css({
 							color: 'rgba(255,255,255,0.65)',
 							textTransform: 'uppercase'
 						}).text(topic.description),
 						$('<br>'),
-						$('<h2>').attr('id', 'current_' + topic.id).css({
-							display: 'inline'
-						}).text(''),
-						$('<small>').append(
-							$('<span>').attr('id', 'min24_'+topic.id)
+						$('<h3>').addClass('vertical-center').css({
+							
+						}).append(
+							//$('<div>').addClass('container').append(
+							//$('<div>').addClass('row').append(
+								$('<span>').addClass('space-after').attr('id', 'current_' + topic.id),
+								//$('<span>').addClass('space'),
+							//	$('<div>').addClass('col-md-8').append(
+							//		$('<div>').addClass('row').append(
+										$('<small>').addClass('').append(
+											$('<span>').addClass('space-after').attr('id', 'max24_'+topic.id).append(
+												$('<span>').addClass('glyphicon glyphicon-triangle-top')
+											),
+											//$('<br>'),
+											//$('<span>').addClass('space'),
+										//),
+										//$('<small>').addClass('').append(
+											$('<span>').addClass('').attr('id', 'min24_'+topic.id).append(
+												$('<span>').addClass('glyphicon glyphicon-triangle-bottom')
+											)
+										)
+							//		)
+							//	)
+							//)
+							//)
 						)
 					),
 					$('<div>').addClass('chart').append($canvas)
@@ -85,12 +105,12 @@ ScatterChartController.prototype = {
 				fill: true
 			}
 		], {
-			bezierCurve: false,
+			bezierCurve: true,
 			datasetStroke: true,
 			pointDot: false,
 			showTooltips: true,
 			scaleShowHorizontalLines: true,
-			scaleShowLabels: false,
+			scaleShowLabels: true,
 			scaleType: "date",
 			scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
 			//scaleLabel: "<%=value%>" + topic.units,
@@ -121,15 +141,26 @@ ScatterChartController.prototype = {
 		
 		this.chart.update();
 		
-		$('#current_' + this.topicID).empty().text(topics[this.topicID].latestPoint.value + topics[this.topicID].units);
+		$('#current_' + this.topicID).contents().filter(function () {
+			return this.nodeType === 3; 
+		}).remove();
+		$('#current_' + this.topicID).text(round(topics[this.topicID].latestPoint.value, topics[this.topicID].decimalPoints) + topics[this.topicID].units);
 		//$('#lastUpdated_' + this.topicID).empty().text('Updated ' + topics[this.topicID].latestPoint.time.fromNow());
-
+		
 		var minMax = topics[this.topicID].minMax();
-		$('#min24_' + this.topicID).empty().append(
-			minMax.minValue + topics[this.topicID].units
+		
+		$('#min24_' + this.topicID).contents().filter(function () {
+			return this.nodeType === 3; 
+		}).remove();
+		$('#min24_' + this.topicID).prepend(
+			round(minMax.minValue, topics[this.topicID].decimalPoints) + topics[this.topicID].units
 		);
-		$('#max24_' + this.topicID).empty().append(
-			minMax.maxValue + topics[this.topicID].units
+
+		$('#max24_' + this.topicID).contents().filter(function () {
+			return this.nodeType === 3; 
+		}).remove();
+		$('#max24_' + this.topicID).prepend(
+			round(minMax.maxValue, topics[this.topicID].decimalPoints) + topics[this.topicID].units
 		);
 		
 	},
