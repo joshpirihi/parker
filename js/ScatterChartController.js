@@ -59,6 +59,9 @@ ScatterChartController.prototype = {
 							color: 'rgba(255,255,255,0.65)',
 							textTransform: 'uppercase'
 						}).text(topic.description),
+						$('<span>').addClass('pull-right').css({
+							color: 'rgba(255,255,255,0.65)'
+						}).attr('id', 'lastUpdated_' + topic.id),
 						$('<br>'),
 						$('<h3>').addClass('vertical-center').css({
 							
@@ -145,7 +148,7 @@ ScatterChartController.prototype = {
 			return this.nodeType === 3; 
 		}).remove();
 		$('#current_' + this.topicID).text(round(topics[this.topicID].latestPoint.value, topics[this.topicID].decimalPoints) + topics[this.topicID].units);
-		//$('#lastUpdated_' + this.topicID).empty().text('Updated ' + topics[this.topicID].latestPoint.time.fromNow());
+		$('#lastUpdated_' + this.topicID).empty().text(topics[this.topicID].latestPoint.time.fromNow());
 		
 		var minMax = topics[this.topicID].minMax();
 		
