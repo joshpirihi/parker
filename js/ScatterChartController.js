@@ -59,7 +59,7 @@ ScatterChartController.prototype = {
 							color: 'rgba(255,255,255,0.65)',
 							textTransform: 'uppercase'
 						}).text(topic.description),
-						$('<span>').addClass('pull-right').css({
+						$('<span>').addClass('pull-right hidden-xs').css({
 							color: 'rgba(255,255,255,0.65)'
 						}).attr('id', 'lastUpdated_' + topic.id),
 						$('<br>'),
