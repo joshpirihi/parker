@@ -68,6 +68,12 @@ class Topic {
 	
 	/**
 	 *
+	 * @var int
+	 */
+	public $order;
+	
+	/**
+	 *
 	 * @var DataPoint[]
 	 */
 	public $points;
@@ -77,7 +83,7 @@ class Topic {
 	 */
 	public static function all() {
 		
-		$rows = dbh_query('SELECT * FROM `topics`;', []);
+		$rows = dbh_query('SELECT * FROM `topics` ORDER BY `order` ASC;', []);
 		
 		if (count($rows) == 0) {
 			return [];
@@ -134,6 +140,7 @@ class Topic {
 		$this->chartMin = $row['chartMin'];
 		$this->chartMax = $row['chartMax'];
 		$this->decimalPoints = $row['decimalPoints'];
+		$this->order = $row['order'];
 		
 	}
 }
