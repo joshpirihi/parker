@@ -7,8 +7,13 @@ canvas {
     border-radius: 3px;
 }
 
-.glyphicon {
+.glyphicon-small {
     font-size: 50%;
+}
+
+.user-icon {
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .vertical-center {

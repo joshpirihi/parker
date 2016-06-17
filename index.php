@@ -339,6 +339,15 @@ if (array_key_exists('action', $_GET)) {
 								</li>
 							</ul>
 						</li>
+						<li id="nav-login-button" style="display: none">
+							<a href="#"><span class="glyphicon glyphicon-user user-icon"></span></a>
+						</li>
+						<li class="dropdown" id="nav-manage-button" style="display: none;">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-user user-icon"></span><span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Logout</a></li>
+							</ul>
+						</li>
 					</ul>
 
 				</div>

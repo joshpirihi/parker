@@ -74,14 +74,14 @@ ScatterChartController.prototype = {
 							//		$('<div>').addClass('row').append(
 										$('<small>').addClass('').append(
 											$('<span>').addClass('space-after').attr('id', 'max24_'+topic.id).append(
-												$('<span>').addClass('glyphicon glyphicon-triangle-top')
+												$('<span>').addClass('glyphicon glyphicon-triangle-top glyphicon-small')
 											),
 											//$('<br>'),
 											//$('<span>').addClass('space'),
 										//),
 										//$('<small>').addClass('').append(
 											$('<span>').addClass('').attr('id', 'min24_'+topic.id).append(
-												$('<span>').addClass('glyphicon glyphicon-triangle-bottom')
+												$('<span>').addClass('glyphicon glyphicon-triangle-bottom glyphicon-small')
 											)
 										)
 							//		)
@@ -115,8 +115,8 @@ ScatterChartController.prototype = {
 			scaleShowHorizontalLines: true,
 			scaleShowLabels: true,
 			scaleType: "date",
-			scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
-			//scaleLabel: "<%=value%>" + topic.units,
+			//scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
+			scaleLabel: "<%=value%>" + topic.units,
 			useUtc: false,
 			scaleDateFormat: "mmm d",
 			scaleTimeFormat: "HH:MM",
