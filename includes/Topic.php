@@ -68,12 +68,6 @@ class Topic {
 	
 	/**
 	 *
-	 * @var int
-	 */
-	public $order;
-	
-	/**
-	 *
 	 * @var DataPoint[]
 	 */
 	public $points;
@@ -140,7 +134,6 @@ class Topic {
 		$this->chartMin = $row['chartMin'];
 		$this->chartMax = $row['chartMax'];
 		$this->decimalPoints = $row['decimalPoints'];
-		$this->order = $row['order'];
 		
 	}
 }

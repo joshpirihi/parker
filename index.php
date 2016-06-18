@@ -251,7 +251,13 @@ if (array_key_exists('action', $_GET)) {
 			//reset the topicIDs array
 			
 			topicIDs = [];
+			var order =  {};
 			for (var t in view.viewTopics) {
+				order[view.viewTopics[t].order] = t;
+			}
+			
+			for (var o in order) {
+				t = order[o];
 				topicIDs.push(view.viewTopics[t].topicID);
 				
 				if (view.viewTopics[t].gauge) {

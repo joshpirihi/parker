@@ -51,6 +51,12 @@ class ViewTopic {
 	public $big;
 	
 	/**
+	 *
+	 * @var int
+	 */
+	public $order;
+	
+	/**
 	 * 
 	 * @param int $vID
 	 * @return ViewTopic[]
@@ -77,6 +83,7 @@ class ViewTopic {
 		$this->topicID = $row['topicID'];
 		$this->viewID = $row['viewID'];
 		$this->big = $row['big'];
+		$this->order = $row['order'];
 		
 	}
 }
