@@ -40,6 +40,9 @@ if (array_key_exists('action', $_GET)) {
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 		
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		
 		<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />-->
 		
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
@@ -307,7 +310,7 @@ if (array_key_exists('action', $_GET)) {
 		
 		</script>
 		
-		<nav class="navbar navbar-inverse">
+		<nav class="navbar navbar-default navbar-inverse">
 			<div class="container">
 
 				<div class="navbar-header">
@@ -327,7 +330,18 @@ if (array_key_exists('action', $_GET)) {
 
 				<div id="main-navbar" class="collapse navbar-collapse">
 
-					
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-th navbar-icon"></span><span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li class="dropdown-header" id="viewMenuHeader">Views</li>
+								
+								<li role="separator" class="divider"></li>
+								<li><a href="#">Manual data entry</a></li>
+							</ul>
+							
+						</li>
+					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -345,11 +359,11 @@ if (array_key_exists('action', $_GET)) {
 								</li>
 							</ul>
 						</li>
-						<li id="nav-login-button" style="display: none">
-							<a href="#"><span class="glyphicon glyphicon-user user-icon"></span></a>
+						<li id="nav-login-button" style="/*display: none*/">
+							<a href="#"><span class="glyphicon glyphicon-user navbar-icon"></span></a>
 						</li>
 						<li class="dropdown" id="nav-manage-button" style="display: none;">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-user user-icon"></span><span class="caret"></span></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-user navbar-icon"></span><span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="#">Logout</a></li>
 							</ul>
