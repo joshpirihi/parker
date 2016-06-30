@@ -331,7 +331,7 @@ if (array_key_exists('action', $_GET)) {
 				<div id="main-navbar" class="collapse navbar-collapse">
 
 					<ul class="nav navbar-nav">
-						<li class="dropdown">
+						<li class="dropdown" style="display: none;">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-th navbar-icon"></span><span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li class="dropdown-header" id="viewMenuHeader">Views</li>
@@ -359,7 +359,7 @@ if (array_key_exists('action', $_GET)) {
 								</li>
 							</ul>
 						</li>
-						<li id="nav-login-button" style="/*display: none*/">
+						<li id="nav-login-button" style="display: none;">
 							<a href="#"><span class="glyphicon glyphicon-user navbar-icon"></span></a>
 						</li>
 						<li class="dropdown" id="nav-manage-button" style="display: none;">
