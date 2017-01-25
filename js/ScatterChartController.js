@@ -175,7 +175,7 @@ ScatterChartController.prototype = {
 		var u = moment().unix() - period;
 
 		for (var p in topics[this.topicID].points) {
-			if (p < u) {
+			if (parseInt(p) < u) {
 				continue;
 			}
 
