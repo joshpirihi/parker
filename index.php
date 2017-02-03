@@ -6,7 +6,7 @@ date_default_timezone_set('Pacific/Auckland');
 require_once('includes/database.inc.php');
 require_once('includes/Topic.php');
 require_once 'includes/DataPoint.php';
-//require_once('includes/User.php');
+require_once('includes/User.php');
 
 if (array_key_exists('action', $_GET)) {
 
