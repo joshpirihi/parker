@@ -152,7 +152,7 @@ ScatterChartController.prototype = {
 		}).remove();
 		$('#current_' + this.topicID).text(round(topics[this.topicID].latestPoint.value, topics[this.topicID].decimalPoints) + topics[this.topicID].units);
 		$('#lastUpdated_' + this.topicID).empty().text(topics[this.topicID].latestPoint.time.fromNow());
-		$('#lastUpdatedShort_' + this.topicID).empty().text(topics[this.topicID].latestPoint.time.diff(moment(), 'minutes') + 'm');
+		$('#lastUpdatedShort_' + this.topicID).empty().text(moment().diff(topics[this.topicID].latestPoint.time, 'minutes') + 'm');
 		
 		
 		var minMax = topics[this.topicID].minMax();
