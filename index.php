@@ -77,7 +77,7 @@ if (array_key_exists('action', $_GET)) {
 <html>
 
 	<head>
-		<title>Parker</title>
+		<title><?php echo STATIONNAME; ?></title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
@@ -337,7 +337,7 @@ if (array_key_exists('action', $_GET)) {
 				return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 			}
 
-			auth.onLogin = function () {
+			/*auth.onLogin = function () {
 				$('#nav-login-button').hide();
 				$('#nav-manage-button').show();
 				$('#loginModal').modal('hide');
@@ -346,7 +346,7 @@ if (array_key_exists('action', $_GET)) {
 			auth.onLogout = function () {
 				$('#nav-login-button').show();
 				$('#nav-manage-button').hide();
-			}
+			}//*/
 
 			$(function () {
 

@@ -1,6 +1,7 @@
 <?php
 
 define('DATABASEPATH', '/Users/joshpirihi/NetBeansProjects/ParkerDB/database.sqlite');
+define('STATIONNAME', 'AWS');
 //define('DATABASEPATH', '/home/pi/parker/database.sqlite');
 
 /**
