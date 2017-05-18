@@ -24,7 +24,7 @@ foreach ($summaries as $s) {
 	$l = dbh_query('SELECT MAX(`time`) AS `time` FROM `datapoints` WHERE `topic_id` = ?;', [$toTopic->id]);
 	$lastToTopicDataPointTime = $l[0]['time'];
 	
-	$newDataPoints = dbh_query('SELECT * FROM `datapoints` WHERE `topic_id` = ? AND `time` > ? ORDER BY `time` ASC;', [$fromTopic->id]);
+	$newDataPoints = dbh_query('SELECT * FROM `datapoints` WHERE `topic_id` = ? AND `time` > ? ORDER BY `time` ASC;', [$fromTopic->id, $lastToTopicDataPointTime]);
 	
 	if (count($newDataPoints) == 0) continue;
 	
