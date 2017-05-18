@@ -29,7 +29,8 @@ foreach ($summaries as $s) {
 	}
 	
 	$newDataPoints = dbh_query('SELECT * FROM `datapoints` WHERE `topic_id` = ? AND `time` > ? ORDER BY `time` ASC;', [$fromTopic->id, $lastToTopicDataPointTime]);
-	
+	echo $lastToTopicDataPointTime;
+	print_r($s);
 	print_r($newDataPoints);
 	
 	if (count($newDataPoints) == 0) continue;
