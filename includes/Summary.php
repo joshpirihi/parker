@@ -60,7 +60,7 @@ class Summary {
 		$this->id = $row['id'];
 		$this->fromTopic = $row['fromTopic'];
 		$this->toTopic = $row['toTopic'];
-		$this->multiplier = $row['muliplier'];
+		$this->multiplier = $row['multiplier'];
 		
 	}
 	
