@@ -73,6 +73,12 @@ class Topic {
 	public $points;
 	
 	/**
+	 *
+	 * @var bool
+	 */
+	public $accumulative;
+	
+	/**
 	 * @return Topic[]
 	 */
 	public static function all() {
@@ -114,6 +120,26 @@ class Topic {
 	
 	/**
 	 * 
+	 * @param int $id
+	 * @return Topic
+	 */
+	public static function withID($id) {
+		
+		$rows = dbh_query('SELECT * FROM `topics` WHERE `id` = ?;', [$id]);
+		
+		if (count($rows) == 0) {
+			return null;
+		}
+		
+		$instance = new self();
+		$instance->loadFromDBRow($rows[0]);
+		return $instance;
+	}
+	
+	
+	
+	/**
+	 * 
 	 * @param double $value
 	 */
 	public function addValue($value) {
@@ -134,6 +160,7 @@ class Topic {
 		$this->chartMin = $row['chartMin'];
 		$this->chartMax = $row['chartMax'];
 		$this->decimalPoints = $row['decimalPoints'];
+		$this->accumulative = $row['accumulative'];
 		
 	}
 }
