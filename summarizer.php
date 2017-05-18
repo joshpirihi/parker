@@ -22,11 +22,8 @@ foreach ($summaries as $s) {
 	$toTopic = Topic::withID($s->toTopic);
 	
 	$l = dbh_query('SELECT MAX(`time`) AS `time` FROM `datapoints` WHERE `topic_id` = ?;', [$toTopic->id]);
-	if (count($l) > 0) {
-		$lastToTopicDataPointTime = $l[0]['time'];
-	} else {
-		$lastToTopicDataPointTime = 0;
-	}
+	$lastToTopicDataPointTime = max($l[0]['time'], 100);
+	
 	
 	$newDataPoints = dbh_query('SELECT * FROM `datapoints` WHERE `topic_id` = ? AND `time` > ? ORDER BY `time` ASC;', [$fromTopic->id, $lastToTopicDataPointTime]);
 	echo $lastToTopicDataPointTime;
