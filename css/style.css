@@ -90,6 +90,10 @@ table.summary {
     opacity: 0;
 }
 
+.modal-title {
+	color: black;
+}
+
 @media (min-width: 800px) {
     /*  .chart {
         width: 600px;

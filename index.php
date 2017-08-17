@@ -3,6 +3,9 @@ session_start();
 
 date_default_timezone_set('Pacific/Auckland');
 
+
+$dbrw = false;
+
 require_once('includes/database.inc.php');
 require_once('includes/Topic.php');
 require_once 'includes/DataPoint.php';
@@ -119,6 +122,7 @@ if (array_key_exists('action', $_GET)) {
 		<script src="js/Topic.js" type="text/javascript"></script>
 		<script src="js/GaugeController.js" type="text/javascript"></script>
 		<script src="js/ScatterChartController.js" type="text/javascript"></script>
+		<script src="js/manageTopics.js" type="text/javascript"></script>
 
 
 	</head>
@@ -180,9 +184,12 @@ if (array_key_exists('action', $_GET)) {
 
 						topics[tID].addPoints(data[tID]);
 						topics[tID].removeOldPoints();
-
-						topics[tID].mostRecent = topics[tID].latestPoint.time.unix();
-
+						
+						if (topics[tID].latestPoint != null) {
+							topics[tID].mostRecent = topics[tID].latestPoint.time.unix();
+						} else {
+							topics[tID].mostRecent = null;
+						}
 						//append the new datapoints onto the topic's array
 						/*for (var dp in data[tID]) {
 						 
@@ -337,17 +344,24 @@ if (array_key_exists('action', $_GET)) {
 				return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 			}
 
-			/*auth.onLogin = function () {
+			auth.onLogin = function () {
 				$('#nav-login-button').hide();
 				$('#nav-manage-button').show();
 				$('#loginModal').modal('hide');
+				
+				$('#loggedInLabel').text('Logged in as ' + auth.user.username);
+				
 			}
 
 			auth.onLogout = function () {
 				$('#nav-login-button').show();
 				$('#nav-manage-button').hide();
-			}//*/
-
+			}
+			
+			$('#topicsModal').on('show.bs.modal', function() {
+				drawTopicsTable();
+			});
+			
 			$(function () {
 
 				auth.checkLogin();
@@ -416,12 +430,17 @@ if (array_key_exists('action', $_GET)) {
 								</li>
 							</ul>
 						</li>
-						<li id="nav-login-button" style="display: none;">
+						<li id="nav-login-button" style="/*display: none;*/">
 							<a href="#" data-toggle="modal" data-target="#loginModal" role="button"><span class="glyphicon glyphicon-user navbar-icon"></span></a>
 						</li>
-						<li class="dropdown" id="nav-manage-button" style="display: none;">
+						<li class="dropdown" id="nav-manage-button" style="/*display: none;*/">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-user navbar-icon"></span><span class="caret"></span></a>
 							<ul class="dropdown-menu">
+								<li><a href="#" data-toggle="modal" data-target="#topicsModal" role="button">Manage topics</a></li>
+								<li><a href="#" data-toggle="modal" data-target="#viewsModal" role="button">Manage views</a></li>
+								
+								<li role="separator" class="divider"></li>
+								<li class="dropdown-header" id="loggedInLabel"></li>
 								<li><a href="#" onclick="auth.logout();">Logout</a></li>
 							</ul>
 						</li>
@@ -472,7 +491,39 @@ if (array_key_exists('action', $_GET)) {
 				</div>
 			</div>
 		</div>
-
+		
+		<div class="modal fade" id="topicsModal" tabindex="-1" role="dialog" aria-labelledBy="topicsLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="topicsLabel">Manage Topics</h4>
+					</div>
+					<div class="modal-body">
+						
+						<div id="placeForTopicsTable"></div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="viewsModal" tabindex="-1" role="dialog" aria-labelledBy="viewsLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="viewsLabel">Manage Views</h4>
+					</div>
+					<div class="modal-body">
+						
+						
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
 	</body>
 
 </html>

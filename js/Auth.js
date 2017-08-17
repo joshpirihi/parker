@@ -2,6 +2,7 @@ function Auth() {
 
 	this.onLogin = null;
 	this.onLogout = null;
+	this.onLoginFailed = null;
 
 	this.loggedIn = false;
 	this.user = null;
@@ -29,6 +30,10 @@ Auth.prototype = {
 			} else {
 				if (typeof self.onLogout === 'function') {
 					self.onLogout();
+				}
+				
+				if (typeof self.onLoginFailed === 'function') {
+					self.onLoginFailed();
 				}
 			}
 
