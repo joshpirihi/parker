@@ -43,7 +43,15 @@ foreach ($summaries as $s) {
 	
 	//if (count($newDataPoints) == 0) continue;
 	
-	$startTime = $newDataPoints[0]['time'] - $newDataPoints[0]['time']%3600;
+	if (count($newDataPoints) == 0) {
+		//then we need to set the start time to the last insert of this summary topic
+		
+		$startTime = $lastToTopicDataPointTime - $lastToTopicDataPointTime%3600;
+		
+	} else {
+		$startTime = $newDataPoints[0]['time'] - $newDataPoints[0]['time']%3600;
+	}
+	
 	$sumToTime = $startTime + 3600;
 	
 	echo 'Starting summarizer.  Initial period is '.strftime('%c', $startTime).' to '.strftime('%c', $sumToTime).'.'.PHP_EOL;
