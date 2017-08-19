@@ -146,10 +146,7 @@ ChartController.prototype = {
 			round(minMax.maxValue, topics[this.topicID].decimalPoints) + topics[this.topicID].units
 		);
 
-		var total = 0;
-		for (var p in topics[this.topicID].points) {
-			total += topics[this.topicID].points[p].value;
-		}
+		var total = topics[this.topicID].total();
 		
 		$('#total_' + this.topicID).contents().filter(function () {
 			return this.nodeType === 3; 

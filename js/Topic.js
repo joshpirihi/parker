@@ -129,6 +129,24 @@ Topic.prototype = {
 		return ret;
 	},
 	
+	total: function(since, until) {
+		since = typeof since !== 'undefined' ? since : moment().unix() - period;
+		until = typeof until !== 'undefined' ? until : moment().unix();
+		
+		var ret = 0;
+		
+		for (var p in this.points) {
+			
+			if (parseInt(p) < since || parseInt(p) > until) {
+				continue;
+			}
+			
+			ret += this.points[p].value;
+			
+		}
+		
+		return ret;
+	}
 	
 }
 
