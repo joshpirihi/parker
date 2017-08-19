@@ -266,6 +266,7 @@ if (array_key_exists('action', $_GET)) {
 				period = parseInt(newPeriod);
 
 				for (var c in chartControllers) {
+					chartControllers[c].update();
 					chartControllers[c].redrawChart();
 				}
 
