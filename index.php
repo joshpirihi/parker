@@ -12,7 +12,9 @@ require_once 'includes/DataPoint.php';
 require_once('includes/User.php');
 
 if (array_key_exists('action', $_GET)) {
-
+	
+	header('Content-Type: application/json');
+	
 	if ($_GET['action'] == 'login') {
 
 		$user = User::verify($_POST['username'], $_POST['password']);

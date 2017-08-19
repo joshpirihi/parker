@@ -62,6 +62,12 @@ class Topic {
 	
 	/**
 	 *
+	 * @var string 
+	 */
+	public $chartType;
+	
+	/**
+	 *
 	 * @var int
 	 */
 	public $decimalPoints;
@@ -159,6 +165,7 @@ class Topic {
 		$this->defaultPeriod = $row['defaultPeriod'];
 		$this->chartMin = $row['chartMin'];
 		$this->chartMax = $row['chartMax'];
+		$this->chartType = $row['chartType'];
 		$this->decimalPoints = $row['decimalPoints'];
 		$this->accumulative = $row['accumulative'];
 		

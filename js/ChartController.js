@@ -16,7 +16,31 @@ ChartController.prototype = {
 		var topic = topics[this.topicID];
 		
 		var $canvas = $('<canvas>').addClass('').attr('id', 'canvas_' + topic.id);
-
+		
+		var $numbers = $('<h3>').addClass('vertical-center');
+		
+		if (topic.chartType == 'scatter') {
+			
+			$numbers.append(
+				$('<span>').addClass('space-after').attr('id', 'current_' + topic.id),
+				$('<small>').addClass('').append(
+					$('<span>').addClass('space-after').attr('id', 'max24_'+topic.id).append(
+						$('<span>').addClass('glyphicon glyphicon-triangle-top glyphicon-small')
+					),
+					$('<span>').addClass('').attr('id', 'min24_'+topic.id).append(
+						$('<span>').addClass('glyphicon glyphicon-triangle-bottom glyphicon-small')
+					)
+				)
+			);
+			
+		} else if (topic.chartType == 'bar') {
+			
+			$numbers.append(
+				$('<span>').addClass('space-after').attr('id', 'total_' + topic.id)
+			);
+			
+		}
+		
 		$('#placeForCharts').append(
 			//$('<li>').append(
 			$('<div>').addClass('col-md-6').css({
@@ -30,9 +54,7 @@ ChartController.prototype = {
 					zIndex: '100'
 				}).append(
 					
-					$('<div>').addClass('summary').css({
-						
-					}).append(
+					$('<div>').addClass('summary').append(
 						$('<span>').css({
 							color: 'rgba(255,255,255,0.65)',
 							textTransform: 'uppercase'
@@ -44,32 +66,7 @@ ChartController.prototype = {
 							color: 'rgba(255,255,255,0.65)'
 						}).attr('id', 'lastUpdatedShort_' + topic.id),
 						$('<br>'),
-						$('<h3>').addClass('vertical-center').css({
-							
-						}).append(
-							//$('<div>').addClass('container').append(
-							//$('<div>').addClass('row').append(
-								$('<span>').addClass('space-after').attr('id', 'current_' + topic.id),
-								//$('<span>').addClass('space'),
-							//	$('<div>').addClass('col-md-8').append(
-							//		$('<div>').addClass('row').append(
-										$('<small>').addClass('').append(
-											$('<span>').addClass('space-after').attr('id', 'max24_'+topic.id).append(
-												$('<span>').addClass('glyphicon glyphicon-triangle-top glyphicon-small')
-											),
-											//$('<br>'),
-											//$('<span>').addClass('space'),
-										//),
-										//$('<small>').addClass('').append(
-											$('<span>').addClass('').attr('id', 'min24_'+topic.id).append(
-												$('<span>').addClass('glyphicon glyphicon-triangle-bottom glyphicon-small')
-											)
-										)
-							//		)
-							//	)
-							//)
-							//)
-						)
+						$numbers
 					),
 					$('<div>').addClass('chart').append($canvas)
 					//$('<div>').addClass('lastUpdated').attr('id', 'lastUpdated_' + topic.id)
@@ -147,6 +144,18 @@ ChartController.prototype = {
 		}).remove();
 		$('#max24_' + this.topicID).prepend(
 			round(minMax.maxValue, topics[this.topicID].decimalPoints) + topics[this.topicID].units
+		);
+
+		var total = 0;
+		for (var p in topics[this.topicID].points) {
+			total += topics[this.topicID].points[p].value;
+		}
+		
+		$('#total_' + this.topicID).contents().filter(function () {
+			return this.nodeType === 3; 
+		}).remove();
+		$('#total_' + this.topicID).prepend(
+			round(total, topics[this.topicID].decimalPoints) + topics[this.topicID].units
 		);
 		
 	},

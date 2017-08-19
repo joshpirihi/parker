@@ -6,7 +6,7 @@ function Topic(data) {
 	this.description = data.description;
 	this.units = data.units;
 	
-	this.chartType = 'scatter';
+	this.chartType = data.chartType;
 	this.colour = data.chartColour;
 	this.chartMin = data.chartMin;
 	this.chartMax = data.chartMax;
