@@ -121,7 +121,7 @@ if (array_key_exists('action', $_GET)) {
 		<script src="js/Auth.js" type="text/javascript"></script>
 		<script src="js/Topic.js" type="text/javascript"></script>
 		<script src="js/GaugeController.js" type="text/javascript"></script>
-		<script src="js/ScatterChartController.js" type="text/javascript"></script>
+		<script src="js/ChartController.js" type="text/javascript"></script>
 		<script src="js/manageTopics.js" type="text/javascript"></script>
 
 
@@ -330,7 +330,7 @@ if (array_key_exists('action', $_GET)) {
 					//add a chart if thats what they want
 					if (view.viewTopics[t].chart) {
 
-						var cc = new ScatterChartController(view.viewTopics[t]);
+						var cc = new ChartController(view.viewTopics[t]);
 						cc.draw();
 
 						chartControllers.push(cc);

@@ -1,4 +1,4 @@
-function ScatterChartController(data) {
+function ChartController(data) {
 	
 	this.chart = null;
 	this.context = null;
@@ -9,7 +9,7 @@ function ScatterChartController(data) {
 	
 }
 
-ScatterChartController.prototype = {
+ChartController.prototype = {
 	
 	draw: function() {
 		
@@ -29,29 +29,7 @@ ScatterChartController.prototype = {
 					padding: '0',
 					zIndex: '100'
 				}).append(
-					/*$('<span>').css('text-align', 'center').text(topic.description),
-					$('<table>').addClass('summary').append(
-						$('<tr>').append(
-							$('<td>').addClass('firstColumn'),
-							$('<td>').addClass('secondColumn').attr('colspan', '2'), //.addClass('valueCell valueTitle').attr('id', 'minmax_'+t).text('Past '+topics[t].periodName()),
-							$('<td>')
-						),
-						$('<tr>').append(
-							$('<td>').addClass('valueCell').append(
-								$('<div>').addClass('valueTitle').text('Current'),
-								$('<div>').css('font-size', '150%').attr('id', 'current_' + topic.id)
-							),
-							$('<td>').addClass('valueCell').append(
-								$('<div>').addClass('valueTitle').text('Min'),
-								$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'min24_' + topic.id)
-							),
-							$('<td>').addClass('valueCell').append(
-								$('<div>').addClass('valueTitle').text('Max'),
-								$('<div>').css('font-size', '100%').css('padding-top', '5px').attr('id', 'max24_' + topic.id)
-							),
-							$('<td>')
-						)
-					),//*/
+					
 					$('<div>').addClass('summary').css({
 						
 					}).append(
