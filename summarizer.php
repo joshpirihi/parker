@@ -41,7 +41,7 @@ foreach ($summaries as $s) {
 	//print_r($s);
 	//print_r($newDataPoints);
 	
-	if (count($newDataPoints) == 0) continue;
+	//if (count($newDataPoints) == 0) continue;
 	
 	$startTime = $newDataPoints[0]['time'] - $newDataPoints[0]['time']%3600;
 	$sumToTime = $startTime + 3600;
