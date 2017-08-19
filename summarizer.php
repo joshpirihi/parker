@@ -48,29 +48,38 @@ foreach ($summaries as $s) {
 	
 	echo 'Starting summarizer.  Initial period is '.strftime('%c', $startTime).' to '.strftime('%c', $sumToTime).'.'.PHP_EOL;
 	
-	$sum = 0;
+	//index the new datapoints by their time
 	
-	foreach ($newDataPoints as $dp) {
+	//loop through the hours since $startTime until the last hour
+	//and sum any datapoints that occur in that hour
+	
+	//end time needs to be the last hour that passed.
+	$now = time();
+	$end = $now - $now%3600;
+	
+	$dp = reset($newDataPoints);
+	
+	for ($from = $startTime; $from<$end; $from+=3600) {
 		
-		if ($dp['time'] > $sumToTime) {
+		$to = $from + 3600;
+		
+		$sum = 0;
+		
+		//sum datapoint values until the datapoint time is after this hour ends
+		while ($dp !== false && $dp['time'] < $to) {
 			
-			echo 'Insert '.$sum.'. Next end time is '.strftime('%c', $sumToTime).'.'.PHP_EOL;
-			
-			//then insert
-			dbh_query('INSERT INTO `datapoints` (`topic_id`, `time`, `value`) VALUES (?, ?, ?);', [$s->toTopic, $sumToTime, $sum]);
-			
-			$sumToTime += 3600;
-			$sum = 0;
-			
-			
-		} else {
-			
-			echo $dp['value'].PHP_EOL;
+			echo $dp['value'] * $s->multiplier.PHP_EOL;
 			
 			$sum += $dp['value'] * $s->multiplier;
 			
+			$dp = next($newDataPoints);
+			if ($dp === false) break;
 		}
 		
+		echo 'Insert '.$sum.PHP_EOL;
+		dbh_query('INSERT INTO `datapoints` (`topic_id`, `time`, `value`) VALUES (?, ?, ?);', [$s->toTopic, $to, $sum]);
+		
 	}
+	
 	
 }
