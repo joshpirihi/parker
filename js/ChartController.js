@@ -75,49 +75,64 @@ ChartController.prototype = {
 		);
 
 		this.context = document.getElementById("canvas_" + topic.id).getContext("2d");
-
-		this.chart = new Chart(this.context).Scatter([
-			{
-				label: topic.description,
-				strokeColor: topic.colour,
-				pointColor: topic.colour,
-				pointStrokeColor: '#fff',
-				data: [{x: 0, y: 0}],
+		
+		if (topic.chartType == 'scatter' || true) {
+			this.chart = new Chart(this.context).Scatter([
+				{
+					label: topic.description,
+					strokeColor: topic.colour,
+					pointColor: topic.colour,
+					pointStrokeColor: '#fff',
+					data: [{x: 0, y: 0}],
+					fill: true
+				}
+			], {
+				bezierCurve: true,
+				datasetStroke: true,
+				pointDot: false,
+				showTooltips: true,
+				scaleShowHorizontalLines: true,
+				scaleShowLabels: true,
+				scaleType: "date",
+				//scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
+				scaleLabel: "<%=value%>" + topic.units,
+				useUtc: false,
+				scaleDateFormat: "mmm d",
+				scaleTimeFormat: "HH:MM",
+				scaleDateTimeFormat: "mmm d, yyyy, HH:MM",
+				animation: false,
+				responsive: true,
+				maintainAspectRatio: false,
+				pointHitDetectionRadius: 1,
 				fill: true
-			}
-		], {
-			bezierCurve: true,
-			datasetStroke: true,
-			pointDot: false,
-			showTooltips: true,
-			scaleShowHorizontalLines: true,
-			scaleShowLabels: true,
-			scaleType: "date",
-			//scaleLabel: "<%=round(value, " + topic.decimalPoints + ")%>" + topic.units,
-			scaleLabel: "<%=value%>" + topic.units,
-			useUtc: false,
-			scaleDateFormat: "mmm d",
-			scaleTimeFormat: "HH:MM",
-			scaleDateTimeFormat: "mmm d, yyyy, HH:MM",
-			animation: false,
-			responsive: true,
-			maintainAspectRatio: false,
-			pointHitDetectionRadius: 1,
-			fill: true
-		});
+			});
+		} else if (topic.chartType == 'bar') {
+			
+			this.chart = new Chart(this.context).Bar({
+				data: {
+					labels: []
+				},
+				options: {}
+			});
+			
+		}
 	},
 	
 	update: function() {
 		//add more data from the topic
 		
-		var newTemps = topics[this.topicID].dataForScatterChart(this.latestPointTime);
-		for (var n in newTemps) {
-			this.chart.datasets[0].addPoint(newTemps[n].x, newTemps[n].y);
-			this.latestPointTime = Math.max(this.latestPointTime, moment(newTemps[n][0]).unix())
-		}
-		
-		if (this.chart.datasets[0].points.length > 1 && this.chart.datasets[0].points[0].arg == 0) {
-			this.chart.datasets[0].removePoint(0);
+		if (topics[this.topicID].chartType == 'scatter' || true) {
+			var newTemps = topics[this.topicID].dataForScatterChart(this.latestPointTime);
+			for (var n in newTemps) {
+				this.chart.datasets[0].addPoint(newTemps[n].x, newTemps[n].y);
+				this.latestPointTime = Math.max(this.latestPointTime, moment(newTemps[n][0]).unix())
+			}
+
+			if (this.chart.datasets[0].points.length > 1 && this.chart.datasets[0].points[0].arg == 0) {
+				this.chart.datasets[0].removePoint(0);
+			}
+		} else if (topics[this.topicID].chartType == 'bar') {
+
 		}
 		
 		this.chart.update();

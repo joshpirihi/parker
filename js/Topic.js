@@ -96,6 +96,28 @@ Topic.prototype = {
 		return data;
 	},
 	
+	dataForBarChart: function(since) {
+		
+		if (Object.keys(this.points).length == 0) {
+			return [];
+		}
+		
+		since = (typeof since === 'undefined') ? 0 : since;
+		
+		var data = [];
+		var u = moment().unix() - period;
+		for (var p in this.points) {
+			
+			if (p < u || p < since) {
+				continue;
+			}
+			
+			data.push(this.points[p].value);
+		}
+		return data;
+		
+	},
+	
 	minMax: function(since, until) {
 		
 		since = typeof since !== 'undefined' ? since : moment().unix() - period;
