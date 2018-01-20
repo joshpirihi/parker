@@ -1,13 +1,14 @@
 <?php
-global $dbrw;
+//global $dbrw;
 
 require_once 'config.inc.php';
 
+$dbrw = true;
 
 if ($dbrw) {
 	$db = new SQLite3(DATABASEPATH, SQLITE3_OPEN_READWRITE);
 } else {
-	$db = new SQLite3(DATABASEPATH, SQLITE3_OPEN_READONLY);
+	//$db = new SQLite3(DATABASEPATH, SQLITE3_OPEN_READONLY);
 }
 $db->busyTimeout(1000);
 

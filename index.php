@@ -3,8 +3,11 @@ session_start();
 
 date_default_timezone_set('Pacific/Auckland');
 
-
-$dbrw = false;
+//peek ahead to see if we need to open the database in rw
+$dbrw = true;
+if ($_GET['action'] == 'saveTopic') {
+	$dbrw = true;
+}
 
 require_once('includes/database.inc.php');
 require_once('includes/Topic.php');
@@ -75,6 +78,10 @@ if (array_key_exists('action', $_GET)) {
 	} else if ($_GET['action'] == 'views') {
 
 		exit(json_encode(View::all(), JSON_PRETTY_PRINT));
+	} else if ($_GET['action'] == 'saveTopic') {
+		
+		exit(json_encode(Topic::saveTopic($_POST), JSON_PRETTY_PRINT));
+		
 	}
 }
 ?>
@@ -100,14 +107,19 @@ if (array_key_exists('action', $_GET)) {
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 
 		<!-- Optional theme -->
-		<link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-		<!-- Latest compiled and minified JavaScript -->
+		<!-- Latest compiled and minified JavaScript-->
 		<script src="js/bootstrap.min.js"></script>
-
+		
+		
+		
+		<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+		
 		<link href="css/style.css" rel=stylesheet type=text/css />
 
 		<script src="js/js.cookie.js"></script>
+		
+		<script src="js/formHelpers.js"></script>
 
 		<script src="js/moment-with-locales.min.js" type="text/javascript"></script>
 		<script src="js/moment-timezone-with-data.min.js" type="text/javascript"></script>
@@ -125,6 +137,7 @@ if (array_key_exists('action', $_GET)) {
 		<script src="js/GaugeController.js" type="text/javascript"></script>
 		<script src="js/ChartController.js" type="text/javascript"></script>
 		<script src="js/manageTopics.js" type="text/javascript"></script>
+		<script src="js/manageViews.js" type="text/javascript"></script>
 
 
 	</head>
@@ -439,8 +452,8 @@ if (array_key_exists('action', $_GET)) {
 						<li class="dropdown" id="nav-manage-button" style="/*display: none;*/">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-user navbar-icon"></span><span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="#" data-toggle="modal" data-target="#topicsModal" role="button">Manage topics</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#viewsModal" role="button">Manage views</a></li>
+								<li><a href="#" data-toggle="modal" data-target="#topicsModal" role="button" onclick="drawTopicsTable();">Manage topics</a></li>
+								<li><a href="#" data-toggle="modal" data-target="#viewsModal" role="button" onclick="fillViewsModal();">Manage views</a></li>
 								
 								<li role="separator" class="divider"></li>
 								<li class="dropdown-header" id="loggedInLabel"></li>
@@ -496,7 +509,7 @@ if (array_key_exists('action', $_GET)) {
 		</div>
 		
 		<div class="modal fade" id="topicsModal" tabindex="-1" role="dialog" aria-labelledBy="topicsLabel">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -512,7 +525,7 @@ if (array_key_exists('action', $_GET)) {
 		</div>
 		
 		<div class="modal fade" id="viewsModal" tabindex="-1" role="dialog" aria-labelledBy="viewsLabel">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -520,7 +533,14 @@ if (array_key_exists('action', $_GET)) {
 					</div>
 					<div class="modal-body">
 						
+						<div id="placeForViews">
+							
+							View: <select name="viewToEdit" id="viewToEdit" onchange="editView(this.value);">
+							</select>
+							
+						</div>
 						
+						<div id="placeForViewsForm"></div>
 						
 					</div>
 				</div>

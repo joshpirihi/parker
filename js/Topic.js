@@ -12,6 +12,7 @@ function Topic(data) {
 	this.chartMax = data.chartMax;
 	this.decimalPoints = data.decimalPoints;
 	this.accumulative = data.accumulative;
+	this.order = data.order;
 	
 	this.mostRecent = moment().unix() - this.period;
 	

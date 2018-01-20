@@ -85,6 +85,12 @@ class Topic {
 	public $accumulative;
 	
 	/**
+	 *
+	 * @var int
+	 */
+	public $order;
+	
+	/**
 	 * @return Topic[]
 	 */
 	public static function all() {
@@ -145,12 +151,68 @@ class Topic {
 	
 	
 	/**
+	 * Add a datapoint value for this topic into the datapoints table
 	 * 
 	 * @param double $value
 	 */
 	public function addValue($value) {
 		
 		dbh_query('INSERT INTO `datapoints` (`topic_id`, `time`, `value`) VALUES (?, ?, ?);', [$this->id, time(), $value]);
+		
+	}
+	
+	/**
+	 * Save the provided topic.
+	 * If id is non numeric or zero, a new topic will be inserted, otherwise the topic with the supplied ID will be updated
+	 * 
+	 * @param array $t
+	 */
+	public static function saveTopic($t) {
+		
+		if (!is_numeric($t['id']) || $t['id'] == 0) {
+			//insert
+			
+			$result = dbh_query('INSERT INTO `topics` (`name`, `description`, `units`, `chartColour`, `chartMin`, `chartMax`, `decimalPoints`, `order`, `accumulative`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);', 
+					[
+						$t['name'], 
+						$t['description'],
+						$t['units'],
+						$t['colour'],
+						$t['chartMin'],
+						$t['chartMax'],
+						$t['decimalPoints'],
+						$t['order'],
+						$t['accumulative']
+					]
+				);
+			
+			return [
+				'action' => 'insert',
+				'result' => $result
+				];
+			
+		} else {
+			//update
+			
+			$result = dbh_query('UPDATE `topics` SET `name` = ?, `description` = ?, `units` = ?, `chartColour` = ?, `chartMin` = ?, `chartMax` = ?, `decimalPoints` = ?, `order` = ?, `accumulative` = ? WHERE `id` = ?;', [
+				$t['name'], 
+				$t['description'],
+				$t['units'],
+				$t['colour'],
+				$t['chartMin'],
+				$t['chartMax'],
+				$t['decimalPoints'],
+				$t['order'],
+				$t['accumulative'],
+				$t['id']
+			]);
+			
+			return [
+				'action' => 'update',
+				'result' => $result
+				];
+			
+		}
 		
 	}
 	
@@ -168,6 +230,7 @@ class Topic {
 		$this->chartType = $row['chartType'];
 		$this->decimalPoints = $row['decimalPoints'];
 		$this->accumulative = $row['accumulative'];
+		$this->order = $row['order'];
 		
 	}
 }

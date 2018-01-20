@@ -218,3 +218,11 @@ table.summary {
     margin-left: -5px;
     z-index: 98;
 }
+
+table {
+	color: #000000;
+}
+
+.modal {
+	color: #000000;
+}
