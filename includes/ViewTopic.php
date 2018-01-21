@@ -86,4 +86,38 @@ class ViewTopic {
 		$this->order = $row['order'];
 		
 	}
+	
+	/**
+	 * Inserts a new ViewTopic
+	 * 
+	 * @param array $vt
+	 * @param int $viewID
+	 */
+	public static function saveViewTopic($vt, $viewID) {
+		
+		
+		if (is_numeric($vt['id']) && $vt['id'] > 0) {
+			
+			if ($vt['delete'] == 'true') {
+				
+				//echo 'Deleting '.$vt['id'].PHP_EOL;
+				
+				dbh_query('DELETE FROM `viewTopics` WHERE `id` = ?;', [$vt['id']]);
+				
+			} else {
+				//update
+				dbh_query('UPDATE `viewTopics` SET `viewID` = ?, `topicID` = ?, `chart` = ?, `big` = ?, `gauge` = ?, `order` = ? WHERE `id` = ?;', [$viewID, $vt['topicID'], $vt['chart']=='true', $vt['big']=='true', $vt['gauge']=='true', $vt['order'], $vt['id']]);
+			}
+		} else {
+			
+			if ($vt['delete'] != 'true') {
+				//insert
+				dbh_query('INSERT INTO `viewTopics` (`viewID`, `topicID`, `chart`, `big`, `gauge`, `order`) VALUES (?, ?, ?, ?, ?, ?);', [$viewID, $vt['topicID'], $vt['chart']=='true', $vt['big']=='true', $vt['gauge']=='true', $vt['order']]);
+			}
+		}
+		
+		
+		
+	}
+	
 }

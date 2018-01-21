@@ -82,6 +82,10 @@ if (array_key_exists('action', $_GET)) {
 		
 		exit(json_encode(Topic::saveTopic($_POST), JSON_PRETTY_PRINT));
 		
+	} else if ($_GET['action'] == 'saveView') {
+		
+		exit(json_encode(View::saveView($_POST), JSON_PRETTY_PRINT));
+		
 	}
 }
 ?>

@@ -43,7 +43,8 @@ function editView(vID) {
 							$('<th>').text('Order'),
 							$('<th>').text('Gauge'),
 							$('<th>').text('Chart'),
-							$('<th>').text('Big')
+							$('<th>').text('Big'),
+							$('<th>').text('Delete')
 						),
 						topicRows,
 						
@@ -62,13 +63,14 @@ function editView(vID) {
 function viewTopicRow(vt) {
 	
 	$row = $('<tr>').attr('data-name', 'topicRow').append(
-		$('<td>').append(inputBox(null, getSafe(() => vt.id)).attr('data-name', 'id')),
+		$('<td>').append(inputBox(null, getSafe(() => vt.id)).attr('data-name', 'id').attr('readonly', 'true')),
 		$('<td>').append(topicSelect(null, getSafe(() => vt.topicID)).attr('data-name', 'topicID')),
 		$('<td>').append(inputBox(null, getSafe(() => vt.order)).attr('data-name', 'order')),
 		
 		$('<td>').append(checkBox(null, getSafe(() => vt.gauge)).attr('data-name', 'gauge')),
 		$('<td>').append(checkBox(null, getSafe(() => vt.chart)).attr('data-name', 'chart')),
-		$('<td>').append(checkBox(null, getSafe(() => vt.big)).attr('data-name', 'big'))
+		$('<td>').append(checkBox(null, getSafe(() => vt.big)).attr('data-name', 'big')),
+		$('<td>').append(checkBox(null, false).attr('data-name', 'delete'))
 	);
 	
 	return $row;
@@ -89,18 +91,26 @@ function saveView() {
 		
 		var id = $(this).find('[data-name=id]')[0].value;
 		
-		if (id != "" && id > 0) {
+		//if (id != "" && id > 0) {
 			view.viewTopics.push({
 				'id': id,
 				'topicID': $(this).find('[data-name=topicID]')[0].value,
 				'order': $(this).find('[data-name=order]')[0].value,
-				'gauge': $(this).find('[data-name=gauge]')[0].value,
-				'chart': $(this).find('[data-name=chart]')[0].value,
-				'big': $(this).find('[data-name=big]')[0].value
+				'gauge': $(this).find('[data-name=gauge]').is(':checked'),
+				'chart': $(this).find('[data-name=chart]').is(':checked'),
+				'big': $(this).find('[data-name=big]').is(':checked'),
+				'delete': $(this).find('[data-name=delete]').is(':checked')
 			});
-		}
+		//}
 		
 	});
 	
 	console.log(view);
+	
+	$.post('index.php?action=saveView', view, function() {
+		loadTopics();
+		loadViews();
+		$('#topicsModal').modal('hide');
+	});
+	
 }

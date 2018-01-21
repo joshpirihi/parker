@@ -51,4 +51,38 @@ class View {
 		$this->name = $row['name'];
 	}
 	
+	/**
+	 * Save the provided view (including topics).  If the id is not valid, a new view will be inserted.
+	 * Regardless if the view is new or not, any existing viewtopics will be replaced with the given ones.
+	 * 
+	 * @param type $v
+	 */
+	public static function saveView($v) {
+		
+		//print_r($v);
+		//exit();
+		
+		if (is_numeric($v['id']) && $v['id'] > 0) {
+			
+			//update
+			dbh_query('UPDATE `views` SET `name` = ? WHERE `id` = ?;', [$v['name'], $v['id']]);
+			
+			//do the viewTopics
+			foreach ($v['viewTopics'] as $vt) {
+				
+				ViewTopic::saveViewTopic($vt, $v['id']);
+				
+			}
+			
+		} else {
+			
+			//insert
+			dbh_query('INSERT INTO `views` (`name`) VALUES (?) ;', [$v['name']]);
+			
+		}
+		
+		
+		
+	}
+	
 }
