@@ -5,7 +5,7 @@ date_default_timezone_set('Pacific/Auckland');
 
 //peek ahead to see if we need to open the database in rw
 $dbrw = true;
-if ($_GET['action'] == 'saveTopic') {
+if (array_key_exists('action', $_GET) && $_GET['action'] == 'saveTopic') {
 	$dbrw = true;
 }
 
