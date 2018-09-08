@@ -13,6 +13,8 @@ echo "Sent message ID: {$mid}\n";
 
 $posted = json_decode(file_get_contents("php://input"));
 
+print_r($posted);
+
 foreach ($posted as $node) {
 	if ($node["pnode"] == "ONG0331") {
 		$client->publish('/electricity/prices/spot', $node['price']);
