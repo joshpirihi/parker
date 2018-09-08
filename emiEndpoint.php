@@ -10,9 +10,9 @@ $client->connect("localhost", 1883, 5);
 $client->loop();
 $mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
 echo "Sent message ID: {$mid}\n";
-$client->publish('/electricity/prices/spot', json_encode($_POST));
+$client->publish('/electricity/prices/spot', file_get_contents("php://input"));
 $client->loop();
-sleep(2);
+//sleep(2);
 
 
 $client->disconnect();
