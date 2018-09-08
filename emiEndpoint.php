@@ -8,8 +8,8 @@ $client->onMessage('message');
 $client->connect("localhost", 1883, 5);
 
 $client->loop();
-//$mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
-//echo "Sent message ID: {$mid}\n";
+$mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
+echo "Sent message ID: {$mid}\n";
 
 $posted = json_decode(file_get_contents("php://input"));
 
