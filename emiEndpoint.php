@@ -10,6 +10,7 @@ $client->connect("localhost", 1883, 5);
 $client->loop();
 $mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
 echo "Sent message ID: {$mid}\n";
+$client->publish('/electricity/prices/spot', json_encode($_POST));
 $client->loop();
 sleep(2);
 
