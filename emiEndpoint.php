@@ -7,13 +7,13 @@ $client->onSubscribe('subscribe');
 $client->onMessage('message');
 $client->connect("localhost", 1883, 5);
 
-while (true) {
-	$client->loop();
-	$mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
-	echo "Sent message ID: {$mid}\n";
-	$client->loop();
-	sleep(2);
-}
+$client->loop();
+$mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
+echo "Sent message ID: {$mid}\n";
+$client->loop();
+sleep(2);
+
+
 $client->disconnect();
 unset($client);
 function connect($r) {
