@@ -11,13 +11,18 @@ $client->loop();
 $mid = $client->publish('/hello', "Hello from PHP at " . date('Y-m-d H:i:s'), 1, 0);
 echo "Sent message ID: {$mid}\n";
 
-$posted = json_decode(file_get_contents("php://input"));
+//*/
+
+$posted = json_decode(file_get_contents("php://input"), JSON_OBJECT_AS_ARRAY);
+//$posted = json_decode(file_get_contents("testEMI.json"), JSON_OBJECT_AS_ARRAY);
+
 
 print_r($posted);
 
 foreach ($posted as $node) {
 	if ($node["pnode"] == "ONG0331") {
 		$client->publish('/electricity/prices/spot', $node['price']);
+		echo 'Found the node';
 		exit;
 	}
 }
@@ -41,4 +46,4 @@ function message($message) {
 }
 function disconnect() {
 	echo "Disconnected cleanly\n";
-}
+}//*/
