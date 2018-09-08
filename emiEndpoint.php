@@ -21,7 +21,7 @@ print_r($posted);
 
 foreach ($posted as $node) {
 	if ($node["pnode"] == "ONG0331") {
-		$client->publish('/electricity/prices/spot', $node['price']);
+		$client->publish('/electricity/prices/spot', $node['price']/10);
 		echo 'Found the node';
 		exit;
 	}
